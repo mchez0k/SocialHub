@@ -1,3 +1,5 @@
+using Serilog;
+
 namespace SocialHub.Auth;
 
 public class Program
@@ -5,14 +7,22 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
-        builder.Services.AddAuthorization();
+        
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()  // Устанавливаем минимальный уровень логирования
+            .WriteTo.Seq("http://localhost:5341")  // Указываем адрес сервера Seq
+            .CreateLogger();
+        
+        builder.Host.UseSerilog();
+        
+        builder.Services.AddControllers();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "SocialHub", Version = "v1" });
+        });        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -26,26 +36,8 @@ public class Program
 
         app.UseAuthorization();
 
-        var summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                        new WeatherForecast
-                        {
-                            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                            TemperatureC = Random.Shared.Next(-20, 55),
-                            Summary = summaries[Random.Shared.Next(summaries.Length)]
-                        })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast")
-            .WithOpenApi();
-
+        Log.Information("Запуск приложения");
+        
         app.Run();
     }
 }
