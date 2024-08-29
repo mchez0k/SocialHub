@@ -35,6 +35,8 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
+        
+        app.MapControllers();
 
         Log.Information("Запуск приложения");
         
