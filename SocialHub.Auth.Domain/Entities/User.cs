@@ -1,12 +1,9 @@
-﻿namespace SocialHub.Auth.Domain.Entities;
+﻿using SocialHub.Shared;
 
-public class User
+namespace SocialHub.Auth.Domain.Entities;
+
+public class User : BaseEntity
 {
-    /// <summary>
-    /// Id
-    /// </summary>
-    public Guid Id { get; set; }
-    
     /// <summary>
     /// Почта пользователя 
     /// </summary>
