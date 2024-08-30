@@ -7,14 +7,14 @@ public class User : BaseEntity
     /// <summary>
     /// Почта пользователя 
     /// </summary>
-    public string Email { get; set; }
+    public string Email { get; set; } = null!;
     /// <summary>
     /// Хэш пароля
     /// </summary>
-    public string PasswordHash { get; set; }
-    
+    public string PasswordHash { get; set; } = null!;
+
     /// <summary>
     /// Имя
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 }
