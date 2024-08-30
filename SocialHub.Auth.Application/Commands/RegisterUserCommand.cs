@@ -23,8 +23,17 @@ public class RegisterUserCommand
     
     #endregion
     
-    public void Execute(RegisterUserCommandModel model)
+    public async Task Execute(RegisterUserCommandModel model)
     {
-        //await usersRepository.CreateAsync(model);
+        if (model.Email is null || model.Password is null || model.Name is null)
+        {
+            throw new ArgumentNullException(nameof(model.Email));
+        }
+        await usersRepository.CreateAsync(new User
+        {
+            Email = model.Email,
+            PasswordHash = model.Password,
+            Name = model.Name
+        });
     }
 }

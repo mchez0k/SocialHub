@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SocialHub.Auth.Application.Commands;
+using SocialHub.Auth.Application.Commands.Models;
 
 namespace SocialHub.Auth.Controllers;
 
@@ -6,32 +8,32 @@ namespace SocialHub.Auth.Controllers;
 [Route("api/{version}/[controller]")]
 public class UsersController : ControllerBase
 {
-    // private readonly RegisterUserCommand registerUserCommand;
-    //
-    // public UsersController(RegisterUserCommand registerUserCommand)
-    // {
-    //     this.registerUserCommand = registerUserCommand;
-    // }
+    private readonly RegisterUserCommand registerUserCommand;
     
-    public UsersController()
+    public UsersController(RegisterUserCommand registerUserCommand)
     {
+        this.registerUserCommand = registerUserCommand;
     }
     
     [HttpGet("check")]
     public async Task<IActionResult> Check()
     {
-        return Ok("Check");
+        await Task.CompletedTask;
+        return Ok();
     }
 
-    // [HttpPost("register")]
-    // public async Task<IActionResult> Register(UserRegisterDto userRegisterDto)
-    // {
-    //     var result = await _userService.RegisterUserAsync(userRegisterDto);
-    //     if (result.Success)
-    //     {
-    //         return Ok(result);
-    //     }
-    //
-    //     return BadRequest(result.Errors);
-    // }
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterUserCommandModel model)
+    {
+        try
+        {
+            await registerUserCommand.Execute(model);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+
+        return Ok("Зарегистрирован новый пользователь!");
+    }
 }
