@@ -16,6 +16,7 @@ public class Program
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
+            .WriteTo.Console()
             .WriteTo.Seq("http://localhost:5341")
             .CreateLogger();
         
@@ -24,23 +25,17 @@ public class Program
         #endregion
 
         #region DI
-
-        builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("SqlDB"), settings =>
-                settings.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
-                    .EnableRetryOnFailure()
-                    .CommandTimeout(10)
-                    .MigrationsHistoryTable("__EFMigrationsHistory", "Auth")));
         
         builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         
         builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
         {
-            containerBuilder.RegisterAssemblyModules(typeof(Program).Assembly);
+            containerBuilder
+                .RegisterAssemblyModules(typeof(Program).Assembly);
 
-            containerBuilder.RegisterType<AppDbContext>()
-                .As<DbContext>()
-                .InstancePerLifetimeScope();
+            containerBuilder
+                .RegisterGeneric(typeof(Logger<>))
+                .As(typeof(ILogger<>));
         });
         
         builder.Services.AddAutofac();

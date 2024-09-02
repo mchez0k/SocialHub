@@ -10,18 +10,22 @@ public class UsersController : ControllerBase
 {
     private readonly RegisterUserCommand registerUserCommand;
     private readonly LoginUserCommand loginUserCommand;
+    private readonly ILogger<UsersController> logger;
 
     public UsersController(RegisterUserCommand registerUserCommand,
-        LoginUserCommand loginUserCommand)
+        LoginUserCommand loginUserCommand,
+        ILogger<UsersController> logger)
     {
         this.registerUserCommand = registerUserCommand;
         this.loginUserCommand = loginUserCommand;
+        this.logger = logger;
     }
 
     [HttpGet("check")]
     public async Task<IActionResult> Check()
     {
         await Task.CompletedTask;
+        logger.LogInformation("Тест пройден");
         return Ok();
     }
 
@@ -37,6 +41,8 @@ public class UsersController : ControllerBase
             return BadRequest(e.Message);
         }
 
+        logger.LogInformation("Зарегистрирован новый пользователь {0}", model.Name);
+
         return Ok("Зарегистрирован новый пользователь!");
     }
 
@@ -51,6 +57,8 @@ public class UsersController : ControllerBase
         {
             return BadRequest(e.Message);
         }
+
+        logger.LogInformation("Успешный вход пользователя {0}", model.Name);
 
         return Ok("Успешный вход");
     }
