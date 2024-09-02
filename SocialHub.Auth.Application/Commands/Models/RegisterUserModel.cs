@@ -1,6 +1,6 @@
 ﻿namespace SocialHub.Auth.Application.Commands.Models;
 
-public class RegisterUserCommandModel
+public class RegisterUserModel
 {
     public string? Email { get; set; }
     

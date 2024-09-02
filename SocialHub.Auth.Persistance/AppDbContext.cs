@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using SocialHub.Auth.Domain.Entities;
 
 namespace SocialHub.Auth.Persistance;

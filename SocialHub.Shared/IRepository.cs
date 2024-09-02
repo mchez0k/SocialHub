@@ -1,6 +1,8 @@
+using System.Linq.Expressions;
+
 namespace SocialHub.Shared;
 
-public interface IRepository<TEntity> where TEntity : BaseEntity
+public interface IRepository<TEntity> where TEntity : class
 {
     /// <summary>
     /// Получаем сущность по Id
@@ -8,12 +10,17 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
     /// <param name="id"></param>
     /// <returns></returns>
     Task<TEntity?> GetById(Guid id);
-    
+
     /// <summary>
     /// Получаем все сущности
     /// </summary>
+    /// <param name="filter">Фильтр LINQ</param>
     /// <returns></returns>
-    Task<List<TEntity>> GetAsync();
+    IEnumerable<TEntity> Get(Expression<Func<TEntity,
+        bool>> filter = null,
+        Func<IQueryable<TEntity>,
+        IOrderedQueryable<TEntity>> orderBy = null,
+        string includeProperties = "");
     
     /// <summary>
     /// Создаём сущность
@@ -32,7 +39,7 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task DeleteAsync(Guid id);
+    void Delete(TEntity entity);
     
     /// <summary>
     /// Сохраняем изменения

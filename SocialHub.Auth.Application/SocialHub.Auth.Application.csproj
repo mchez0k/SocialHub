@@ -7,7 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SocialHub.Auth.Domain\SocialHub.Auth.Domain.csproj" />
       <ProjectReference Include="..\SocialHub.Auth.Persistance\SocialHub.Auth.Persistance.csproj" />
+      <ProjectReference Include="..\SocialHub.Shared\SocialHub.Shared.csproj" />
     </ItemGroup>
 
 </Project>

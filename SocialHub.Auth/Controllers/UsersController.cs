@@ -9,12 +9,15 @@ namespace SocialHub.Auth.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly RegisterUserCommand registerUserCommand;
-    
-    public UsersController(RegisterUserCommand registerUserCommand)
+    private readonly LoginUserCommand loginUserCommand;
+
+    public UsersController(RegisterUserCommand registerUserCommand,
+        LoginUserCommand loginUserCommand)
     {
         this.registerUserCommand = registerUserCommand;
+        this.loginUserCommand = loginUserCommand;
     }
-    
+
     [HttpGet("check")]
     public async Task<IActionResult> Check()
     {
@@ -23,7 +26,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterUserCommandModel model)
+    public async Task<IActionResult> Register([FromBody] RegisterUserModel model)
     {
         try
         {
@@ -35,5 +38,20 @@ public class UsersController : ControllerBase
         }
 
         return Ok("Зарегистрирован новый пользователь!");
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginUserModel model)
+    {
+        try
+        {
+            loginUserCommand.Execute(model);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+
+        return Ok("Успешный вход");
     }
 }

@@ -2,10 +2,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using SocialHub.Auth.Application.Commands;
-using SocialHub.Auth.Domain.Entities;
 using SocialHub.Auth.Persistance;
-using SocialHub.Shared;
 
 namespace SocialHub.Auth;
 

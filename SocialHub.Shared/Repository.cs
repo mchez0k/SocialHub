@@ -1,13 +1,42 @@
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace SocialHub.Shared;
 
-public class Repository<TEntity>(DbContext context) : IRepository<TEntity>, IDisposable
-    where TEntity : BaseEntity
+public class Repository<TEntity>(DbContext context) : IRepository<TEntity>, IDisposable where TEntity : BaseEntity
 {
-    public async Task<List<TEntity>> GetAsync()
+    public IEnumerable<TEntity> Get(
+        Expression<Func<TEntity, bool>> filter = null,
+        Func<IQueryable<TEntity>,
+        IOrderedQueryable<TEntity>> orderBy = null,
+        string includeProperties = "")
     {
-        return await context.Set<TEntity>().ToListAsync();
+
+        IQueryable<TEntity> query = context.Set<TEntity>();
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        if (includeProperties != null)
+        {
+            foreach (var includeProperty in includeProperties.Split
+            (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+        }
+
+        if (orderBy != null)
+        {
+            return orderBy(query).ToList();
+        }
+        else
+        {
+            return query.ToList();
+        }
     }
     
     public async Task<TEntity?> GetById(Guid id)
@@ -27,15 +56,13 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>, IDis
         await Task.CompletedTask;
     }
 
-    public async Task DeleteAsync(Guid id)
+    public void Delete(TEntity entity)
     {
-        TEntity? student = context.Set<TEntity>().Find(id);
-        if (student == null)
+        if (context.Entry(entity).State == EntityState.Detached)
         {
-            throw new Exception("Entity not found"); // Если сущность не найдена, то выбрасываем исключение TODO: Проверить на полезность
+            context.Set<TEntity>().Attach(entity);
         }
-        context.Set<TEntity>().Remove(student);
-        await Task.CompletedTask;
+        context.Set<TEntity>().Remove(entity);
     }
 
     public async Task SaveChangesAsync()
