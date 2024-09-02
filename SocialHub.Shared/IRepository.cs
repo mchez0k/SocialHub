@@ -17,9 +17,9 @@ public interface IRepository<TEntity> where TEntity : class
     /// <param name="filter">Фильтр LINQ</param>
     /// <returns></returns>
     IEnumerable<TEntity> Get(Expression<Func<TEntity,
-        bool>> filter = null,
+        bool>>? filter = null,
         Func<IQueryable<TEntity>,
-        IOrderedQueryable<TEntity>> orderBy = null,
+        IOrderedQueryable<TEntity>>? orderBy = null,
         string includeProperties = "");
     
     /// <summary>

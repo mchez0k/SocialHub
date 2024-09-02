@@ -41,7 +41,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginUserModel model)
+    public  IActionResult Login([FromBody] LoginUserModel model)
     {
         try
         {

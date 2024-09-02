@@ -41,7 +41,7 @@ public class RegisterUserCommand
         {
             rng.GetBytes(salt);
         }
-        var pbkdf2 = new Rfc2898DeriveBytes(model.Password, salt, 100000);
+        var pbkdf2 = new Rfc2898DeriveBytes(model.Password, salt, 100000, HashAlgorithmName.SHA256);
         byte[] hash = pbkdf2.GetBytes(20);
         byte[] hashBytes = new byte[36];
         Array.Copy(salt, 0, hashBytes, 0, 16);

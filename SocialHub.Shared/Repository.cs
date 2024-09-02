@@ -7,9 +7,9 @@ namespace SocialHub.Shared;
 public class Repository<TEntity>(DbContext context) : IRepository<TEntity>, IDisposable where TEntity : BaseEntity
 {
     public IEnumerable<TEntity> Get(
-        Expression<Func<TEntity, bool>> filter = null,
+        Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>,
-        IOrderedQueryable<TEntity>> orderBy = null,
+        IOrderedQueryable<TEntity>>? orderBy = null,
         string includeProperties = "")
     {
 
