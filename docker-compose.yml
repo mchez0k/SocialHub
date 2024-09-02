@@ -8,11 +8,20 @@ services:
       ACCEPT_EULA: 'Y'
       MSSQL_SA_PASSWORD: 'Test4321_'
       MSSQL_DATA_DIR: /var/opt/mssql/data
-      MSSQL_PID: 'Developer' 
-      MSSQL_TCP_PORT: 1433 
-    ports: 
+      MSSQL_PID: 'Developer'
+      MSSQL_TCP_PORT: 1433
+    ports:
       - "1455:1433"
     volumes:
       - ./data:/var/opt/mssql/data
       - ./log:/var/opt/mssql/log
       - ./secrets:/var/opt/mssql/secrets   
+      
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: Y
+    ports:
+      - "5341:80"

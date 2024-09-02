@@ -22,6 +22,8 @@ public class Program
         
         builder.Host.UseSerilog();
 
+        Log.Logger.Information("Запуск приложения");
+
         #endregion
 
         #region DI
@@ -63,8 +65,6 @@ public class Program
         app.UseAuthorization();
         
         app.MapControllers();
-
-        Log.Information("Запуск приложения");
         
         app.Run();
     }
