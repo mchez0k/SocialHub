@@ -29,9 +29,11 @@ namespace SocialHub.Auth.Application.Commands
 
         #endregion
 
-        public void Execute(LoginUserModel model)
+        public async Task Execute(LoginUserModel model)
         {
-            var existingUser = usersRepository.Get().Where(u => u.Name == model.Name).FirstOrDefault();
+            var existingUser = (await usersRepository
+                .GetAsync(u => u.Name == model.Name))
+                .FirstOrDefault();
             if (existingUser == null) throw new Exception("Пользователя с таким именем не существует");
 
             // Проверяем пароль по хэшу

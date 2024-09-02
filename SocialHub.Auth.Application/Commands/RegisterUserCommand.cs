@@ -30,8 +30,10 @@ public class RegisterUserCommand
             throw new ArgumentNullException("Ошибка данных пользователя");
         if (!IsValidEmail(model.Email))
             throw new ArgumentNullException("Неверный email");
-        var existingUser = usersRepository.Get();
-        if (existingUser.Any(u => u.Email == model.Email || u.Name == model.Name))
+        var existingUser = (await usersRepository
+            .GetAsync())
+            .Any(u => u.Email == model.Email || u.Name == model.Name);
+        if (existingUser)
             throw new InvalidOperationException("Почта или имя уже используются");
 
         #region Hashing

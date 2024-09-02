@@ -6,13 +6,11 @@ namespace SocialHub.Shared;
 
 public class Repository<TEntity>(DbContext context) : IRepository<TEntity>, IDisposable where TEntity : BaseEntity
 {
-    public IEnumerable<TEntity> Get(
+    public async Task<List<TEntity>> GetAsync(
         Expression<Func<TEntity, bool>>? filter = null,
-        Func<IQueryable<TEntity>,
-        IOrderedQueryable<TEntity>>? orderBy = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         string includeProperties = "")
     {
-
         IQueryable<TEntity> query = context.Set<TEntity>();
 
         if (filter != null)
@@ -20,10 +18,9 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>, IDis
             query = query.Where(filter);
         }
 
-        if (includeProperties != null)
+        if (!string.IsNullOrWhiteSpace(includeProperties))
         {
-            foreach (var includeProperty in includeProperties.Split
-            (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 query = query.Include(includeProperty);
             }
@@ -31,47 +28,45 @@ public class Repository<TEntity>(DbContext context) : IRepository<TEntity>, IDis
 
         if (orderBy != null)
         {
-            return orderBy(query).ToList();
+            query = orderBy(query);
         }
-        else
-        {
-            return query.ToList();
-        }
+
+        return await query.ToListAsync();
     }
-    
-    public async Task<TEntity?> GetById(Guid id)
+
+    public async Task<TEntity?> GetByIdAsync(Guid id)
     {
         return await context.Set<TEntity>().FindAsync(id);
     }
-    
+
     public async Task CreateAsync(TEntity entity)
     {
-        await context.Set<TEntity>().AddAsync(entity); 
-        await Task.CompletedTask;
+        await context.Set<TEntity>().AddAsync(entity);
     }
-    
+
     public async Task UpdateAsync(TEntity entity)
     {
         context.Entry(entity).State = EntityState.Modified;
-        await Task.CompletedTask;
+        await Task.CompletedTask; // Здесь `CompletedTask` тоже не требуется.
     }
 
-    public void Delete(TEntity entity)
+    public async Task DeleteAsync(TEntity entity)
     {
         if (context.Entry(entity).State == EntityState.Detached)
         {
             context.Set<TEntity>().Attach(entity);
         }
         context.Set<TEntity>().Remove(entity);
+        await Task.CompletedTask; // Удаление также может быть компонентом асинхронного паттерна, но обычно этого не требуется
     }
 
     public async Task SaveChangesAsync()
     {
         await context.SaveChangesAsync();
     }
-    
+
     private bool disposed = false;
-    
+
     protected virtual void Dispose(bool disposing)
     {
         if (!disposed)

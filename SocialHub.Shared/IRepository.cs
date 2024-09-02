@@ -9,38 +9,38 @@ public interface IRepository<TEntity> where TEntity : class
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task<TEntity?> GetById(Guid id);
+    Task<TEntity?> GetByIdAsync(Guid id);
 
     /// <summary>
     /// Получаем все сущности
     /// </summary>
-    /// <param name="filter">Фильтр LINQ</param>
+    /// <param name="filter">Фильтр</param>
     /// <returns></returns>
-    IEnumerable<TEntity> Get(Expression<Func<TEntity,
-        bool>>? filter = null,
+    Task<List<TEntity>> GetAsync(
+        Expression<Func<TEntity, bool>>? filter = null,
         Func<IQueryable<TEntity>,
         IOrderedQueryable<TEntity>>? orderBy = null,
         string includeProperties = "");
-    
+
     /// <summary>
     /// Создаём сущность
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
     Task CreateAsync(TEntity entity);
-    
+
     /// <summary>
     /// Обновляем сущность
     /// </summary>
     Task UpdateAsync(TEntity entity);
-    
+
     /// <summary>
     /// Удаляем сущность
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="entity"></param>
     /// <returns></returns>
-    void Delete(TEntity entity);
-    
+    Task DeleteAsync(TEntity entity);
+
     /// <summary>
     /// Сохраняем изменения
     /// </summary>
